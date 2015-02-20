@@ -105,6 +105,18 @@ local Button = {
 			end
 		end
 	end,
+	takeEvents = function(self, ...)
+		local event = {...}
+		if #event == 0 then event = {os.pullEvent()} end
+		if (self.side == "term" and event[1] == "mouse_click") or (self.side ~= "term" and event[1] == "monitor_touch" and event[2] == self.side) then
+			local clicked = self.clickMap[event[3]][event[4]]
+			if clicked and self.buttonList[clicked] then
+				self.buttonList[event[2]].func()
+				return "button_click", clicked
+			end
+		end
+		return unpack(event)
+	end,
 	handleEvents = function(self, ...)
 		local event = {...}
 		if #event == 0 then event = {os.pullEvent()} end
